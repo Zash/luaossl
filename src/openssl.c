@@ -9984,6 +9984,12 @@ static int sx_addCustomExtension(lua_State *L) {
 #endif
 
 
+static int sx_enableDane(lua_State *L) {
+	SSL_CTX *ctx = checksimple(L, 1, SSL_CTX_CLASS);
+	lua_pushboolean(L, SSL_CTX_dane_enable(ctx));
+	return 1;
+}
+
 static int sx__gc(lua_State *L) {
 	SSL_CTX **ud = luaL_checkudata(L, 1, SSL_CTX_CLASS);
 
@@ -10058,6 +10064,7 @@ static const auxL_Reg sx_methods[] = {
 #if HAVE_SSL_CTX_ADD_CUSTOM_EXT
 	{ "addCustomExtension", &sx_addCustomExtension },
 #endif
+	{ "enableDane", &sx_enableDane },
 	{ NULL, NULL },
 };
 
@@ -10907,6 +10914,25 @@ static int ssl_getTLSextStatusOCSPResp(lua_State *L) {
 	return 1;
 } /* ssl_getTLSextStatusOCSPResp() */
 
+static int ssl_setDane(lua_State*L){
+	SSL *ssl = checksimple(L, 1, SSL_CLASS);
+	lua_pushboolean(L, SSL_dane_enable(ssl, luaL_checkstring(L, 2)));
+	return 1;
+}
+
+static int ssl_addTlsa(lua_State*L){
+	SSL *ssl = checksimple(L, 1, SSL_CLASS);
+
+	uint8_t usage = luaL_checkinteger(L, 2);
+	uint8_t selector = luaL_checkinteger(L, 3);
+	uint8_t mtype = luaL_checkinteger(L, 4);
+	size_t len;
+	const unsigned char *data = (unsigned char*)luaL_checklstring(L, 5, &len);
+
+	lua_pushboolean(L, SSL_dane_tlsa_add(ssl, usage, selector, mtype, data, len));
+	return 1;
+}
+
 
 static int ssl__gc(lua_State *L) {
 	SSL **ud = luaL_checkudata(L, 1, SSL_CLASS);
@@ -10979,6 +11005,8 @@ static const auxL_Reg ssl_methods[] = {
 #endif
 	{ "setTLSextStatusOCSPResp", &ssl_setTLSextStatusOCSPResp },
 	{ "getTLSextStatusOCSPResp", &ssl_getTLSextStatusOCSPResp },
+	{ "setDane", &ssl_setDane },
+	{ "addTlsa", &ssl_addTlsa },
 	{ NULL,            NULL },
 };
 

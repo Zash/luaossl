@@ -1104,6 +1104,10 @@ It receives the $ssl$ object of the connection, the $ext\_type$ you registered t
 
 \emph{Only supported since OpenSSL 1.1.1.}
 
+\subsubsection[\fn{context:enableDane}]{\fn{context:enableDane()}}
+
+Enables use of DANE with this context.
+
 \end{Module}
 
 
@@ -1302,6 +1306,14 @@ Sets an \module{openssl.ocsp.response}. Used by a server to staple an OCSP respo
 \subsubsection[\fn{ssl:getTLSextStatusOCSPResp}]{\fn{ssl:getTLSextStatusOCSPResp()}}
 
 Returns the \module{openssl.ocsp.response} associated with the ssl object (or $nil$ if one has not been set).
+
+\subsubsection[\fn{ssl:setDane}]{\fn{ssl:setDane($name$)}}
+
+Enables DANE and sets hostname. context:enableDane() must have been called.
+
+\subsubsection[\fn{ssl:addTlsa}]{\fn{ssl:addTlsa($usage$, $selector$, $type$, $data$)}}
+
+Adds one iitem of TLSA data.
 
 \end{Module}
 
